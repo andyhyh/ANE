@@ -13,7 +13,7 @@ static NSString *anesdk_gen_conv2d_fwd(int in_ch, int out_ch, int in_h, int in_w
                                        int dil_h, int dil_w) {
     NSMutableString *m = [NSMutableString string];
     [m appendString:ANESDK_MIL_HDR];
-    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, %d, %d]> x, "
+    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, %d, %d]> x, "
                       "tensor<fp16, [%d, %d, %d, %d]> W) {\n", 
                       in_ch, in_h, in_w, out_ch, in_ch, k_h, k_w];
     
@@ -35,7 +35,7 @@ static NSString *anesdk_gen_conv2d_fwd(int in_ch, int out_ch, int in_h, int in_w
 static NSString *anesdk_gen_maxpool2d_fwd(int ch, int in_h, int in_w, int k_h, int k_w, int stride_h, int stride_w) {
     NSMutableString *m = [NSMutableString string];
     [m appendString:ANESDK_MIL_HDR];
-    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, %d, %d]> x) {\n", ch, in_h, in_w];
+    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, %d, %d]> x) {\n", ch, in_h, in_w];
     [m appendFormat:@"        tensor<int32, [2]> ks = const()[name=string(\"ks\"), val=tensor<int32, [2]>([%d,%d])];\n", k_h, k_w];
     [m appendFormat:@"        tensor<int32, [2]> st = const()[name=string(\"st\"), val=tensor<int32, [2]>([%d,%d])];\n", stride_h, stride_w];
     [m appendFormat:@"        tensor<int32, [4]> pd = const()[name=string(\"pd\"), val=tensor<int32, [4]>([0,0,0,0])];\n"];

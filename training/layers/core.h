@@ -3,9 +3,10 @@
 #import <Foundation/Foundation.h>
 
 #define ANESDK_MIL_HDR \
-    @"program(1.3)\n[buildInfo = dict<string, string>({{\"coremlc-component-MIL\", \"3510.2.1\"}, " \
-    "{\"coremlc-version\", \"3505.4.1\"}, {\"coremltools-component-milinternal\", \"\"}, " \
-    "{\"coremltools-version\", \"9.0\"}})]\n{\n"
+    @"program(1.4)\n[buildInfo = dict<string, string>({\n" \
+    "    \"coremlc-version\": \"3600.0.0\",\n" \
+    "    \"coremltools-version\": \"9.0\"\n" \
+    "})]\n{\n"
 
 #define ANESDK_CONV_CONST \
     @"        string pt = const()[name=string(\"pt\"), val=string(\"valid\")];\n" \
@@ -22,7 +23,7 @@
 static NSString *anesdk_gen_linear_fwd(int in_dim, int out_dim, int seq) {
     NSMutableString *m = [NSMutableString string];
     [m appendString:ANESDK_MIL_HDR];
-    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, 1, %d]> x, "
+    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, 1, %d]> x, "
                       "tensor<fp16, [%d, %d, 1, 1]> W) {\n", 
                       in_dim, seq, out_dim, in_dim];
     [m appendString:ANESDK_CONV_CONST];
@@ -37,7 +38,7 @@ static NSString *anesdk_gen_linear_fwd(int in_dim, int out_dim, int seq) {
 static NSString *anesdk_gen_relu_fwd(int dim, int seq) {
     NSMutableString *m = [NSMutableString string];
     [m appendString:ANESDK_MIL_HDR];
-    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, 1, %d]> x) {\n", dim, seq];
+    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, 1, %d]> x) {\n", dim, seq];
     [m appendFormat:@"        tensor<fp16, [1, %d, 1, %d]> y = relu(x=x);\n", dim, seq];
     [m appendString:@"    } -> (y);\n}\n"];
     return m;
@@ -49,7 +50,7 @@ static NSString *anesdk_gen_relu_fwd(int dim, int seq) {
 static NSString *anesdk_gen_gelu_fwd(int dim, int seq) {
     NSMutableString *m = [NSMutableString string];
     [m appendString:ANESDK_MIL_HDR];
-    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, 1, %d]> x) {\n", dim, seq];
+    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, 1, %d]> x) {\n", dim, seq];
     [m appendFormat:@"        tensor<fp16, [1, %d, 1, %d]> y = gelu(x=x);\n", dim, seq];
     [m appendString:@"    } -> (y);\n}\n"];
     return m;
@@ -61,7 +62,7 @@ static NSString *anesdk_gen_gelu_fwd(int dim, int seq) {
 static NSString *anesdk_gen_sigmoid_fwd(int dim, int seq) {
     NSMutableString *m = [NSMutableString string];
     [m appendString:ANESDK_MIL_HDR];
-    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, 1, %d]> x) {\n", dim, seq];
+    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, 1, %d]> x) {\n", dim, seq];
     [m appendFormat:@"        tensor<fp16, [1, %d, 1, %d]> y = sigmoid(x=x);\n", dim, seq];
     [m appendString:@"    } -> (y);\n}\n"];
     return m;
@@ -75,7 +76,7 @@ static NSString *anesdk_gen_rmsnorm_fwd(int dim, int seq) {
     float invd = 1.0f/(float)dim;
     NSMutableString *m = [NSMutableString string];
     [m appendString:ANESDK_MIL_HDR];
-    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, 1, %d]> x, "
+    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, 1, %d]> x, "
                       "tensor<fp16, [1, %d, 1, 1]> weight) {\n", 
                       dim, seq, dim];
     [m appendFormat:@"        tensor<fp16, [1, %d, 1, %d]> sq = mul(x=x, y=x);\n", dim, seq];
@@ -100,7 +101,7 @@ static NSString *anesdk_gen_rmsnorm_fwd(int dim, int seq) {
 static NSString *anesdk_gen_add_fwd(int dim, int seq) {
     NSMutableString *m = [NSMutableString string];
     [m appendString:ANESDK_MIL_HDR];
-    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, 1, %d]> x, tensor<fp16, [1, %d, 1, %d]> y) {\n", dim, seq, dim, seq];
+    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, 1, %d]> x, tensor<fp16, [1, %d, 1, %d]> y) {\n", dim, seq, dim, seq];
     [m appendFormat:@"        tensor<fp16, [1, %d, 1, %d]> out = add(x=x, y=y);\n", dim, seq];
     [m appendString:@"    } -> (out);\n}\n"];
     return m;
@@ -112,7 +113,7 @@ static NSString *anesdk_gen_add_fwd(int dim, int seq) {
 static NSString *anesdk_gen_softmax_fwd(int dim, int seq) {
     NSMutableString *m = [NSMutableString string];
     [m appendString:ANESDK_MIL_HDR];
-    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, 1, %d]> x) {\n", dim, seq];
+    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, 1, %d]> x) {\n", dim, seq];
     [m appendString:@"        int32 axis = const()[name=string(\"axis\"), val=int32(1)];\n"]; // Softmax over dim
     [m appendFormat:@"        tensor<fp16, [1, %d, 1, %d]> y = softmax(x=x, axis=axis);\n", dim, seq];
     [m appendString:@"    } -> (y);\n}\n"];
@@ -126,7 +127,7 @@ static NSString *anesdk_gen_softmax_fwd(int dim, int seq) {
 static NSString *anesdk_gen_layernorm_fwd(int dim, int seq) {
     NSMutableString *m = [NSMutableString string];
     [m appendString:ANESDK_MIL_HDR];
-    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, 1, %d]> x, "
+    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, 1, %d]> x, "
                       "tensor<fp16, [1, %d, 1, 1]> weight, "
                       "tensor<fp16, [1, %d, 1, 1]> bias) {\n", 
                       dim, seq, dim, dim];

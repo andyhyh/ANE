@@ -106,7 +106,9 @@ static Kern *compile_kern_mil_w(NSString *mil, NSDictionary *weights, int *in_si
     }
     NSError *e = nil;
     if (!((BOOL(*)(id,SEL,unsigned int,id,NSError**))objc_msgSend)(mdl, @selector(compileWithQoS:options:error:), 21, @{}, &e)) {
-        printf("  [compile] FAIL: %s\n", e ? [[e description] UTF8String] : "no error"); return NULL;
+        printf("  [compile] FAIL: %s\n", e ? [[e description] UTF8String] : "no error");
+        printf("--- FAILED MIL ---\n%s\n------------------\n", [mil UTF8String]);
+        return NULL;
     }
     if (!((BOOL(*)(id,SEL,unsigned int,id,NSError**))objc_msgSend)(mdl, @selector(loadWithQoS:options:error:), 21, @{}, &e)) {
         printf("  [compile] load FAIL\n"); return NULL;
