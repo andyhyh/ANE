@@ -2,11 +2,7 @@
 #pragma once
 #include "stories_io.h"
 
-#define MIL_HDR \
-    @"program(1.4)\n[buildInfo = dict<string, string>({\n" \
-    "    \"coremlc-version\": \"3600.0.0\",\n" \
-    "    \"coremltools-version\": \"9.0\"\n" \
-    "})]\n{\n"
+#define MIL_HDR @"program(1.4)\n{\n"
 #define CONV_CONST \
     "        string pt = const()[name=string(\"pt\"), val=string(\"valid\")];\n" \
     "        tensor<int32, [2]> st = const()[name=string(\"st\"), val=tensor<int32, [2]>([1,1])];\n" \
@@ -20,7 +16,7 @@ static NSString *gen_sdpa_fwd_flex(void) {
     float invd = 1.0f/(float)DIM;
     NSMutableString *m = [NSMutableString string];
     [m appendString:MIL_HDR];
-    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, 1, %d]> x, "
+    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, 1, %d]> x, "
                      "tensor<fp16, [1,%d,1,1]> rw, "
                      "tensor<fp16, [%d,%d,1,1]> Wq, "
                      "tensor<fp16, [%d,%d,1,1]> Wk, "
@@ -77,7 +73,7 @@ static NSString *gen_ffn_fwd_flex(void) {
     float invd = 1.0f/(float)DIM;
     NSMutableString *m = [NSMutableString string];
     [m appendString:MIL_HDR];
-    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, 1, %d]> x, "
+    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, 1, %d]> x, "
                      "tensor<fp16, [1,%d,1,1]> rw, "
                      "tensor<fp16, [%d,%d,1,1]> W1, "
                      "tensor<fp16, [%d,%d,1,1]> W2, "
@@ -113,7 +109,7 @@ static NSString *gen_ffn_fwd_flex(void) {
 static NSString *gen_ffn_bwd_flex(void) {
     NSMutableString *m = [NSMutableString string];
     [m appendString:MIL_HDR];
-    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, 1, %d]> x, "
+    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, 1, %d]> x, "
                      "tensor<fp16, [%d,%d,1,1]> W1t, "
                      "tensor<fp16, [%d,%d,1,1]> W2t, "
                      "tensor<fp16, [%d,%d,1,1]> W3t) {\n", 
@@ -152,7 +148,7 @@ static NSString *gen_ffn_bwd_flex(void) {
 static NSString *gen_qkvb_flex(void) {
     NSMutableString *m = [NSMutableString string];
     [m appendString:MIL_HDR];
-    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, 1, %d]> x, "
+    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, 1, %d]> x, "
                      "tensor<fp16, [%d,%d,1,1]> Wqt, "
                      "tensor<fp16, [%d,%d,1,1]> Wkt, "
                      "tensor<fp16, [%d,%d,1,1]> Wvt) {\n", 
@@ -179,7 +175,7 @@ static NSString *gen_sdpa_bwd1_flex(void) {
     float sc = 1.0f/sqrtf((float)HD);
     NSMutableString *m = [NSMutableString string];
     [m appendString:MIL_HDR];
-    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, 1, %d]> x, "
+    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, 1, %d]> x, "
                      "tensor<fp16, [%d,%d,1,1]> Wot, "
                      "tensor<fp16, [1,1,%d,%d]> cm) {\n", 
                      4*DIM, SEQ, DIM, DIM, SEQ, SEQ];
@@ -233,7 +229,7 @@ static NSString *gen_sdpa_bwd2_flex(void) {
     int bwd2_in = 2*SCORE_CH + 2*DIM;
     NSMutableString *m = [NSMutableString string];
     [m appendString:MIL_HDR];
-    [m appendFormat:@"    func main<ios17>(tensor<fp16, [1, %d, 1, %d]> x) {\n", bwd2_in, SEQ];
+    [m appendFormat:@"    func main<ios18>(tensor<fp16, [1, %d, 1, %d]> x) {\n", bwd2_in, SEQ];
     [m appendFormat:@"        tensor<int32, [4]> sz_sc = const()[name=string(\"szsc\"), val=tensor<int32, [4]>([1,%d,1,%d])];\n", SCORE_CH, SEQ];
     [m appendString:@"        tensor<int32, [4]> b0 = const()[name=string(\"b0\"), val=tensor<int32, [4]>([0,0,0,0])];\n"];
     [m appendFormat:@"        tensor<fp16, [1,%d,1,%d]> pf = slice_by_size(x=x,begin=b0,size=sz_sc);\n", SCORE_CH,SEQ];
